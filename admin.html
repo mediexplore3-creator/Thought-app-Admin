@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ===== Base & Reset (Mobile-First) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #2c3e50;
+      line-height: 1.6;
+    }
+
+    /* ===== Admin Container ===== */
+    .admin-container {
+      max-width: 900px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 16px; /* Reduced padding for mobile */
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 25px; /* Reduced margin */
+      color: #2c3e50;
+    }
+
+    .admin-header h1 {
+      font-size: 1.8rem; /* Adjusted size */
+      margin-bottom: 8px;
+    }
+
+    .admin-header p {
+      color: #7f8c8d;
+      font-size: 0.95rem; /* Adjusted size */
+    }
+
+    /* ===== Cards ===== */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px 20px; /* Adjusted padding */
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card h2 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.4rem;
+    }
+
+    .card h2 i {
+      color: #3498db;
+    }
+
+    /* ===== Forms & Inputs (Touch-Friendly) ===== */
+    select, input, textarea {
+      padding: 16px; /* Larger for touch */
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 16px; /* Prevents zoom on iOS */
+      width: 100%;
+      margin-bottom: 16px;
+      transition: border 0.3s;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Increased gap */
+      margin: 16px 0;
+      font-size: 16px; /* Larger text */
+    }
+
+    .checkbox-label input {
+      width: auto;
+      margin: 0;
+      transform: scale(1.2); /* Make checkbox itself slightly larger */
+    }
+
+    /* ===== Buttons (Touch-Friendly) ===== */
+    button {
+      padding: 14px 20px; /* Good size */
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 12px; /* Consistent radius */
+      cursor: pointer;
+      font-size: 16px; /* Larger text */
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s;
+      width: fit-content; /* Don't stretch by default */
+      min-height: 46px; /* Minimum touch target */
+    }
+
+    button:hover {
+      background: #219a52;
+    }
+
+    /* Specific style for Delete buttons */
+    .delete-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 8px; /* Slightly less rounded than main buttons */
+      padding: 8px 12px; /* Comfortable size */
+      cursor: pointer;
+      font-size: 0.9rem; /* Smaller font */
+      width: auto; /* Don't stretch */
+      min-height: auto; /* Override default min-height */
+      display: inline-flex; /* For better alignment */
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .delete-btn i {
+        font-size: 0.9rem; /* Match icon size */
+    }
+
+    /* ===== Tables ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.9rem; /* Slightly smaller for dense data */
+    }
+
+    th, td {
+      padding: 14px 10px; /* Adjusted padding, less horizontal */
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      /* Force long content to wrap */
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    th {
+      background: #f8f9fa;
+      color: #34495e;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background: #f1f5f9;
+    }
+
+    /* ===== Preview Sections ===== */
+    .preview-section {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 12px; /* Consistent radius */
+      border: 1px dashed #dee2e6;
+    }
+
+    .preview-box {
+      min-height: 60px;
+      margin-top: 10px;
+    }
+
+    .preview-placeholder {
+      color: #95a5a6;
+      font-style: italic;
+      font-size: 0.9rem;
+    }
+
+    .preview-card {
+      padding: 12px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .preview-card img {
+        max-width: 100%;
+    }
+
+    .toast-preview {
+        /* Inherits styles from JS */
+    }
+
+    /* ===== Media Queries for Larger Screens ===== */
+    @media (min-width: 768px) {
+      .admin-container {
+        padding: 20px;
+        margin: 30px auto;
+      }
+
+      .admin-header h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      table {
+        font-size: 1rem;
+      }
+
+      th, td {
+        padding: 14px; /* Restore padding on larger screens */
+      }
+    }
+
+  </style>
+  <link rel="stylesheet" href="admin-styles.css" /> <!-- If you have one -->
+</head>
+<body>
+  <div class="admin-container">
+    <header class="admin-header">
+      <h1><i class="fas fa-cogs"></i> Admin Panel</h1>
+      <p>Manage thoughts, users & app info</p>
+    </header>
+
+    <!-- Add Thought -->
+    <section class="card">
+      <h2><i class="fas fa-plus-circle"></i> Add New Thought</h2>
+      <form id="thoughtForm">
+        <select id="category" required>
+          <option value="">Select Category</option>
+          <option value="text">Text</option>
+          <option value="images">Images</option>
+        </select>
+
+        <div id="inputContainer"></div>
+
+        <button type="submit"><i class="fas fa-paper-plane"></i> Submit</button>
+
+        <!-- Thought Preview Area -->
+        <div class="preview-section">
+          <h3><i class="fas fa-eye"></i> Preview</h3>
+          <div id="thoughtPreview" class="preview-box">
+            <p class="preview-placeholder">Preview will appear here...</p>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Manage Thoughts -->
+    <section class="card">
+      <h2><i class="fas fa-list"></i> Manage Thoughts</h2>
+      <table id="thoughtsTable">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Content (Preview)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be populated by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Users -->
+    <section class="card">
+      <h2><i class="fas fa-users"></i> Submitted Users</h2>
+      <table id="usersTable">
+        <thead>
+          <tr>
+             <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- App Info -->
+    <section class="card">
+      <h2><i class="fas fa-info-circle"></i> App Information</h2>
+      <form id="infoForm">
+        <input type="text" id="developer" placeholder="Developer Name" required />
+        <input type="text" id="minOS" placeholder="Minimum OS" required />
+        <input type="text" id="buildNumber" placeholder="Build Number" required />
+        <input type="text" id="version" placeholder="Version (e.g. 1.0.0)" required />
+        <button type="submit"><i class="fas fa-save"></i> Save Info</button>
+      </form>
+    </section>
+
+     <!-- Daily Content -->
+    <section class="card">
+      <h2><i class="fas fa-sun"></i> Daily Experience</h2>
+      <form id="dailyContentForm">
+        <input type="text" id="quote" placeholder="Inspirational Quote" />
+        <input type="text" id="quoteAuthor" placeholder="— Author (e.g. Maya Angelou)" />
+
+        <input type="text" id="tip" placeholder="Tip of the Day (e.g. Breathe deeply today)" />
+
+        <select id="theme">
+          <option value="">Select Theme</option>
+          <option value="soft">Soft Light</option>
+          <option value="dark">Dark Mode</option>
+          <option value="ocean">Ocean Breeze</option>
+          <option value="sunset">Sunset Glow</option>
+          <option value="forest">Forest Calm</option>
+          <option value="custom">Custom Image URL</option>
+        </select>
+        <input type="url" id="customThemeUrl" placeholder="Enter background image URL" style="display:none;" />
+
+        <input type="text" id="achievement" placeholder="Achievement Name (e.g. Thought Explorer)" />
+        <input type="text" id="milestone" placeholder="Milestone Message (e.g. 50 thoughts viewed!)" />
+
+         <!-- Daily Content Preview Area -->
+        <div class="preview-section">
+          <h3><i class="fas fa-eye"></i> Toast Preview</h3>
+          <div id="dailyContentPreview" class="preview-box">
+            <p class="preview-placeholder">Toast preview will appear here...</p>
+          </div>
+        </div>
+
+        <button type="submit"><i class="fas fa-bolt"></i> Publish Daily Magic</button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="./firebase-config.js"></script>
+  <script type="module" src="./admin-script.js"></script>
+</body>
+</html>
